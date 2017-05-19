@@ -1,6 +1,5 @@
 import { ServiceRegistry, ShortenAct, proposals } from '@ords/core';
-import { connector } from '@ords/modules';
-
+import { connectors } from '@ords/modules';
 import { Observable } from 'rxjs';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -21,7 +20,7 @@ export class MapExpressAuthToken {
     /**
      * Construct new instance on the specific set of services
      */
-    constructor(mserver: ServiceRegistry, connector: ExpressConnector) {
+    constructor(mserver: ServiceRegistry, connector: connectors.ConnectorExpress) {
 
         // create router on instance should it map differently
         connector.maps.push(express.Router().use(this.validate.bind(this)));
@@ -38,7 +37,7 @@ export class MapExpressAuthToken {
     /**
      * Log in a user based upon password and username
      */
-    private signIn(req: ExpressConnectorRequest, res: express.Response, next: express.NextFunction): void {
+    private signIn(req: connectors.ConnectorExpressRequest, res: express.Response, next: express.NextFunction): void {
 
         // check if fields exists in body
         if (req.body.meta === undefined) {
@@ -53,7 +52,7 @@ export class MapExpressAuthToken {
             }
 
             // create an observable request
-            let request: Main.Types.Request = {
+            let request: proposals.Main.Types.Request = {
                 package: Observable.pairs(req.body.meta),
                 auth: req.auth
             };
@@ -86,7 +85,7 @@ export class MapExpressAuthToken {
     /**
      * Sign up a user based upon password and username
      */
-    private signUp(req: ExpressConnectorRequest, res: express.Response, next: express.NextFunction): void {
+    private signUp(req: connectors.ConnectorExpressRequest, res: express.Response, next: express.NextFunction): void {
 
         // check if fields exists in body
         if (req.body.meta === undefined) {
@@ -104,7 +103,7 @@ export class MapExpressAuthToken {
             if (req.body.meta.password === req.body.meta.password2) {
 
                 // create an observable request
-                let request: Main.Types.Request = {
+                let request: proposals.Main.Types.Request = {
                     package: Observable.pairs(req.body.meta),
                     auth: req.auth
                 };
@@ -141,7 +140,7 @@ export class MapExpressAuthToken {
     /**
      * Log in a user based upon password and username
      */
-    private signOut(req: ExpressConnectorRequest, res: express.Response, next: express.NextFunction): void {
+    private signOut(req: connectors.ConnectorExpressRequest, res: express.Response, next: express.NextFunction): void {
 
         // check session
         if (req.headers.authorization !== undefined) {
@@ -150,7 +149,7 @@ export class MapExpressAuthToken {
             var parts = req.headers.authorization.split(' ');
 
             // create an observable request
-            let request: Main.Types.Request = {
+            let request: proposals.Main.Types.Request = {
                 package: Observable.pairs({
                     session: parts[1]
                 }),
@@ -188,10 +187,10 @@ export class MapExpressAuthToken {
     /**
      * Remove the current user
      */
-    private remove(req: ExpressConnectorRequest, res: express.Response, next: express.NextFunction): void {
+    private remove(req: connectors.ConnectorExpressRequest, res: express.Response, next: express.NextFunction): void {
 
         // create an observable request
-        let request: Main.Types.Request = {
+        let request: proposals.Main.Types.Request = {
             package: Observable.pairs({
                 account: req.auth
             }),
@@ -224,7 +223,7 @@ export class MapExpressAuthToken {
     /**
      * Patch the current user
      */
-    private patch(req: ExpressConnectorRequest, res: express.Response, next: express.NextFunction): void {
+    private patch(req: connectors.ConnectorExpressRequest, res: express.Response, next: express.NextFunction): void {
 
         // check if fields exists in body
         if (req.body.meta === undefined) {
@@ -234,7 +233,7 @@ export class MapExpressAuthToken {
         } else if (req.body.password === req.body.password2) {
 
             // create an observable request
-            let request: Main.Types.Request = {
+            let request: proposals.Main.Types.Request = {
                 package: Observable.pairs({
                     user: req.auth,
                     meta: req.body.meta
@@ -273,7 +272,7 @@ export class MapExpressAuthToken {
     /**
      * Remove the current user
      */
-    private validate(req: ExpressConnectorRequest, res: express.Response, next: express.NextFunction): void {
+    private validate(req: connectors.ConnectorExpressRequest, res: express.Response, next: express.NextFunction): void {
 
         // if no header is set go next as auth is undefined
         if (req.headers.authorization === undefined) {
@@ -286,7 +285,7 @@ export class MapExpressAuthToken {
             var parts = req.headers.authorization.split(' ');
 
             // create an observable request
-            let request: Main.Types.Request = {
+            let request: proposals.Main.Types.Request = {
                 package: Observable.pairs({
                     session: parts[1],
                 }),

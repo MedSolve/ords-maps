@@ -1,6 +1,5 @@
-import { ServiceRegistry, ShortenAct } from '../main';
-import { Main } from '../proposals';
-import { ExpressConnector, ExpressConnectorRequest } from '../modules/connector';
+import { ServiceRegistry, ShortenAct, proposals } from '@ords/core';
+import { connectors } from '@ords/modules';
 import { Observable } from 'rxjs';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
@@ -30,7 +29,7 @@ export class MapExpressDatabaseRest {
     /**
      * Construct new instance on the specific set of services
      */
-    constructor(mserver: ServiceRegistry, connector: ExpressConnector) {
+    constructor(mserver: ServiceRegistry, connector: connectors.ConnectorExpress) {
 
         // create router on instance should it map differently??
         connector.maps.push(express.Router().all('/db/:resource/', bodyParser.json(), this.bridge.bind(this)));
@@ -42,7 +41,7 @@ export class MapExpressDatabaseRest {
     /**
      * Forward the request and send back the response between the micro services
      */
-    public bridge(req: ExpressConnectorRequest, res: express.Response) {
+    public bridge(req: connectors.ConnectorExpressRequest, res: express.Response) {
 
         // create package
         let requestPackage: any = {
@@ -75,7 +74,7 @@ export class MapExpressDatabaseRest {
         }
 
         // create an observable request
-        let request: Main.Types.Request = {
+        let request: proposals.Main.Types.Request = {
             package: Observable.pairs(requestPackage),
             auth: req.auth
         };
