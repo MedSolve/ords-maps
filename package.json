@@ -1,6 +1,6 @@
 {
   "name": "@ords/maps",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Maps for ords-core microservices",
   "main": "dist/index",
   "typings": "dist/index",
