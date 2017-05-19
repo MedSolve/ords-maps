@@ -1,0 +1,34 @@
+{
+  "name": "@ords/maps",
+  "version": "0.9.0",
+  "description": "Maps for ords-core microservices",
+  "main": "dist/index",
+  "typings": "dist/index",
+  "scripts": {
+    "test": "tsc; mocha dist/*.test.*",
+    "clean": "./scripts/cleanBuild.sh",
+    "build-depoly": "tsc",
+    "build-env": "npm install && typings install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/medsolve/ords-modules.git"
+  },
+  "keywords": [
+    "microservice",
+    "maps"
+  ],
+  "author": "Rune k. Rasmussen",
+  "license": "MIT",
+  "dependencies": {
+    "@ords/core": "^0.9.0",
+    "@ords/modules": "^0.9.1",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.2",
+    "rxjs": "^5.3.0",
+    "ts-md5": "^1.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0"
+  }
+}
