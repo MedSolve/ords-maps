@@ -24,7 +24,7 @@ export class MapExpressAuthToken {
         // create router on instance should it map differently
         connector.maps.push(express.Router().use(this.validate.bind(this)));
         connector.maps.push(express.Router().post('/auth/signin/', bodyParser.json(), this.signIn.bind(this)));
-        connector.maps.push(express.Router().post('/auth/signup/', bodyParser.json(), this.validate.bind(this), this.signUp.bind(this)));
+        connector.maps.push(express.Router().post('/auth/signup/', bodyParser.json(), this.signUp.bind(this)));
         connector.maps.push(express.Router().get('/auth/signout/', this.signOut.bind(this)));
         connector.maps.push(express.Router().get('/auth/remove/', this.remove.bind(this)));
         connector.maps.push(express.Router().get('/auth/patch/', this.patch.bind(this)));
