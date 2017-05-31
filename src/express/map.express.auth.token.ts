@@ -3,7 +3,6 @@ import { connectors } from '@ords/modules';
 import { Observable } from 'rxjs';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import { Md5 } from 'ts-md5/dist/md5';
 
 /**
  * Express REST map connector
@@ -45,11 +44,6 @@ export class MapExpressAuthToken {
 
             // if everything is a okay then processed
         } else {
-
-            // check if password field exists and hash it
-            if (req.body.meta.password) {
-                req.body.meta.password = Md5.hashStr(req.body.meta.password);
-            }
 
             // create an observable request
             let request: proposals.Main.Types.Request = {
@@ -94,47 +88,34 @@ export class MapExpressAuthToken {
             // if everything is a okay then processed
         } else {
 
-            // check if password field exists and hash it
-            if (req.body.meta.password) {
-                req.body.meta.password = Md5.hashStr(req.body.meta.password);
-                req.body.meta.password2 = Md5.hashStr(req.body.meta.password2);
-            }
+            // create an observable request
+            let request: proposals.Main.Types.Request = {
+                package: Observable.pairs(req.body.meta),
+                auth: req.auth
+            };
 
-            if (req.body.meta.password === req.body.meta.password2) {
+            // perform the action
+            ShortenAct.tryCatch(this.msever, this.root, 'signup', request, (err: Error, out: any, meta: any) => {
 
-                // create an observable request
-                let request: proposals.Main.Types.Request = {
-                    package: Observable.pairs(req.body.meta),
-                    auth: req.auth
-                };
+                if (err) {
+                    res.status(404).send(err.toString());
+                } else {
 
-                // perform the action
-                ShortenAct.tryCatch(this.msever, this.root, 'signup', request, (err: Error, out: any, meta: any) => {
+                    // set header from meta
+                    Object.keys(meta).forEach((key) => {
 
-                    if (err) {
-                        res.status(404).send(err.toString());
+                        // bind key values of meta
+                        res.header(key, meta[key]);
+                    });
+
+                    // check datatype of results
+                    if (Number.isInteger(out)) {
+                        res.send(out.toString());
                     } else {
-
-                        // set header from meta
-                        Object.keys(meta).forEach((key) => {
-
-                            // bind key values of meta
-                            res.header(key, meta[key]);
-                        });
-
-                        // check datatype of results
-                        if (Number.isInteger(out)) {
-                            res.send(out.toString());
-                        } else {
-                            res.send(out);
-                        }
+                        res.send(out);
                     }
-                });
-
-                // passwords are not similar
-            } else {
-                res.send(400)
-            }
+                }
+            });
         }
     }
     /**
@@ -230,7 +211,7 @@ export class MapExpressAuthToken {
             res.send(400);
 
             // if everything is a okay then processed
-        } else if (req.body.password === req.body.password2) {
+        } else {
 
             // create an observable request
             let request: proposals.Main.Types.Request = {
@@ -263,10 +244,6 @@ export class MapExpressAuthToken {
                     }
                 }
             });
-
-            // password one and two not simmilar
-        } else {
-            res.send(400);
         }
     }
     /**
