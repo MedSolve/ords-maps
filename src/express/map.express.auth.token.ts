@@ -90,7 +90,7 @@ export class MapExpressAuthToken {
 
             // create an observable request
             let request: proposals.Main.Types.Request = {
-                package: Observable.pairs(req.body.meta),
+                package: Observable.pairs(req.body),
                 auth: req.auth
             };
 
